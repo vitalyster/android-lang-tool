@@ -9,6 +9,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -143,13 +145,13 @@ public class ToolExport {
 
     private static HSSFCellStyle createTitleStyle(HSSFWorkbook wb) {
         HSSFFont bold = wb.createFont();
-        bold.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        bold.setBold(true);
 
         HSSFCellStyle style = wb.createCellStyle();
         style.setFont(bold);
-        style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
-        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        style.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(HorizontalAlignment.CENTER);
         style.setWrapText(true);
 
         return style;
@@ -158,7 +160,7 @@ public class ToolExport {
     private static HSSFCellStyle createCommentStyle(HSSFWorkbook wb) {
 
         HSSFFont commentFont = wb.createFont();
-        commentFont.setColor(HSSFColor.GREEN.index);
+        commentFont.setColor(HSSFColor.HSSFColorPredefined.GREEN.getIndex());
         commentFont.setItalic(true);
         commentFont.setFontHeightInPoints((short) 12);
 
@@ -170,7 +172,7 @@ public class ToolExport {
     private static HSSFCellStyle createPlurarStyle(HSSFWorkbook wb) {
 
         HSSFFont commentFont = wb.createFont();
-        commentFont.setColor(HSSFColor.GREY_50_PERCENT.index);
+        commentFont.setColor(HSSFColor.HSSFColorPredefined.GREY_50_PERCENT.getIndex());
         commentFont.setItalic(true);
         commentFont.setFontHeightInPoints((short)12);
 
@@ -181,7 +183,7 @@ public class ToolExport {
 
     private static HSSFCellStyle createKeyStyle(HSSFWorkbook wb) {
         HSSFFont bold = wb.createFont();
-        bold.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        bold.setBold(true);
         bold.setFontHeightInPoints((short)11);
 
         HSSFCellStyle keyStyle = wb.createCellStyle();
@@ -203,8 +205,8 @@ public class ToolExport {
     private static HSSFCellStyle createMissedStyle(HSSFWorkbook wb) {
 
         HSSFCellStyle style = wb.createCellStyle();
-        style.setFillForegroundColor(HSSFColor.RED.index);
-        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        style.setFillForegroundColor(HSSFColor.HSSFColorPredefined.RED.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         return style;
     }
