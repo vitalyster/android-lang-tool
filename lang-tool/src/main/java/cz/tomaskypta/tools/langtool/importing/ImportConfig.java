@@ -9,9 +9,10 @@ import java.util.*;
 import cz.tomaskypta.tools.langtool.CommandlineArguments;
 import cz.tomaskypta.tools.langtool.CommonConfig;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * Created by Tomáš Kypta on 02.10.14.
@@ -110,8 +111,8 @@ public class ImportConfig extends CommonConfig {
         }
 
         try {
-            HSSFWorkbook wbEscaping = new HSSFWorkbook(new FileInputStream(new File(this.escapingConfigFile)));
-            HSSFSheet sheetEscaping = wbEscaping.getSheetAt(0);
+            Workbook wbEscaping = WorkbookFactory.create(new FileInputStream(new File(this.escapingConfigFile)));
+            Sheet sheetEscaping = wbEscaping.getSheetAt(0);
             Iterator<Row> it = sheetEscaping.rowIterator();
             while (it.hasNext()) {
                 Row row = it.next();
@@ -139,8 +140,8 @@ public class ImportConfig extends CommonConfig {
         }
 
         try {
-            HSSFWorkbook wbEscaping = new HSSFWorkbook(new FileInputStream(new File(this.extraTransformations)));
-            HSSFSheet sheetEscaping = wbEscaping.getSheetAt(0);
+            Workbook wbEscaping = WorkbookFactory.create(new FileInputStream(new File(this.extraTransformations)));
+            Sheet sheetEscaping = wbEscaping.getSheetAt(0);
             Iterator<Row> it = sheetEscaping.rowIterator();
             while (it.hasNext()) {
                 Row row = it.next();
@@ -171,8 +172,8 @@ public class ImportConfig extends CommonConfig {
         }
 
         try {
-            HSSFWorkbook wbEscaping = new HSSFWorkbook(new FileInputStream(new File(this.mixedContent)));
-            HSSFSheet sheetEscaping = wbEscaping.getSheetAt(0);
+            Workbook wbEscaping = WorkbookFactory.create(new FileInputStream(new File(this.mixedContent)));
+            Sheet sheetEscaping = wbEscaping.getSheetAt(0);
             Iterator<Row> it = sheetEscaping.rowIterator();
             while (it.hasNext()) {
                 Row row = it.next();

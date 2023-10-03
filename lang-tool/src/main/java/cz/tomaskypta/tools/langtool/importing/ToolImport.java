@@ -1,8 +1,15 @@
 package cz.tomaskypta.tools.langtool.importing;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
+import cz.tomaskypta.tools.langtool.util.EscapingUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -12,21 +19,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import cz.tomaskypta.tools.langtool.util.EscapingUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class ToolImport {
 
@@ -53,12 +48,12 @@ public class ToolImport {
             return;
         }
 
-        HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(new File(config.inputFile)));
-        HSSFSheet sheet = wb.getSheetAt(0);
+        var wb = WorkbookFactory.create(new FileInputStream(config.inputFile));
+        var sheet = wb.getSheetAt(0);
 
-        HSSFSheet sheetMapping = null;
+        Sheet sheetMapping = null;
         if (!StringUtils.isEmpty(config.mappingFile)) {
-            HSSFWorkbook wbMapping = new HSSFWorkbook(new FileInputStream(new File(config.mappingFile)));
+            Workbook wbMapping = WorkbookFactory.create(new FileInputStream(config.mappingFile));
             sheetMapping = wbMapping.getSheetAt(0);
         }
 
@@ -86,8 +81,8 @@ public class ToolImport {
             return;
         }
 
-        HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(new File(input)));
-        HSSFSheet sheet = wb.getSheetAt(0);
+        Workbook wb = WorkbookFactory.create(new FileInputStream(new File(input)));
+        Sheet sheet = wb.getSheetAt(0);
 
 
         tool.outResDir = new File(projectDir, "/res");
@@ -95,7 +90,7 @@ public class ToolImport {
         tool.parse(sheet);
     }
 
-    private void prepareMapping(HSSFSheet sheetMapping) {
+    private void prepareMapping(Sheet sheetMapping) {
         if (sheetMapping == null) {
             return;
         }
@@ -107,7 +102,7 @@ public class ToolImport {
         }
     }
 
-    private void parse(HSSFSheet sheet) throws IOException, TransformerException {
+    private void parse(Sheet sheet) throws IOException, TransformerException {
         Row row = sheet.getRow(0);
         Iterator<Cell> cells = row.cellIterator();
         cells.next();// ignore key
@@ -122,7 +117,7 @@ public class ToolImport {
         }
     }
 
-    private void generateLang(HSSFSheet sheet, String lang, int column) throws IOException,
+    private void generateLang(Sheet sheet, String lang, int column) throws IOException,
         TransformerException {
 
         Document dom = builder.newDocument();
@@ -137,7 +132,7 @@ public class ToolImport {
         String arrayName = null;
 
         while (iterator.hasNext()) {
-            HSSFRow row = (HSSFRow)iterator.next();
+            Row row = iterator.next();
             Cell cell = row.getCell(0);// android key
             if (cell == null) {
                 continue;

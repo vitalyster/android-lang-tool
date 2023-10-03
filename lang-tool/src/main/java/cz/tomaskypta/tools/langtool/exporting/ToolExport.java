@@ -7,10 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -112,9 +109,9 @@ public class ToolExport {
 
     private Map<String, Integer> exportDefLang(File valueDir) throws IOException, SAXException {
         Map<String, Integer> keys = new HashMap<String, Integer>();
-        HSSFWorkbook wb = new HSSFWorkbook();
+        Workbook wb = WorkbookFactory.create(outExcelFile.getName().endsWith("x"));
 
-        HSSFSheet sheet;
+        Sheet sheet;
         sheet = wb.createSheet(project);
         int rowIndex = 0;
         sheet.createRow(rowIndex++);
@@ -143,13 +140,13 @@ public class ToolExport {
         return dom.getDocumentElement().getChildNodes();
     }
 
-    private static HSSFCellStyle createTitleStyle(HSSFWorkbook wb) {
-        HSSFFont bold = wb.createFont();
+    private static CellStyle createTitleStyle(Workbook wb) {
+        Font bold = wb.createFont();
         bold.setBold(true);
 
-        HSSFCellStyle style = wb.createCellStyle();
+        CellStyle style = wb.createCellStyle();
         style.setFont(bold);
-        style.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setWrapText(true);
@@ -157,78 +154,78 @@ public class ToolExport {
         return style;
     }
 
-    private static HSSFCellStyle createCommentStyle(HSSFWorkbook wb) {
+    private static CellStyle createCommentStyle(Workbook wb) {
 
-        HSSFFont commentFont = wb.createFont();
-        commentFont.setColor(HSSFColor.HSSFColorPredefined.GREEN.getIndex());
+        Font commentFont = wb.createFont();
+        commentFont.setColor(IndexedColors.GREEN.getIndex());
         commentFont.setItalic(true);
         commentFont.setFontHeightInPoints((short) 12);
 
-        HSSFCellStyle commentStyle = wb.createCellStyle();
+        CellStyle commentStyle = wb.createCellStyle();
         commentStyle.setFont(commentFont);
         return commentStyle;
     }
 
-    private static HSSFCellStyle createPlurarStyle(HSSFWorkbook wb) {
+    private static CellStyle createPlurarStyle(Workbook wb) {
 
-        HSSFFont commentFont = wb.createFont();
-        commentFont.setColor(HSSFColor.HSSFColorPredefined.GREY_50_PERCENT.getIndex());
+        Font commentFont = wb.createFont();
+        commentFont.setColor(IndexedColors.GREY_50_PERCENT.getIndex());
         commentFont.setItalic(true);
         commentFont.setFontHeightInPoints((short)12);
 
-        HSSFCellStyle commentStyle = wb.createCellStyle();
+        CellStyle commentStyle = wb.createCellStyle();
         commentStyle.setFont(commentFont);
         return commentStyle;
     }
 
-    private static HSSFCellStyle createKeyStyle(HSSFWorkbook wb) {
-        HSSFFont bold = wb.createFont();
+    private static CellStyle createKeyStyle(Workbook wb) {
+        Font bold = wb.createFont();
         bold.setBold(true);
         bold.setFontHeightInPoints((short)11);
 
-        HSSFCellStyle keyStyle = wb.createCellStyle();
+        CellStyle keyStyle = wb.createCellStyle();
         keyStyle.setFont(bold);
 
         return keyStyle;
     }
 
-    private static HSSFCellStyle createTextStyle(HSSFWorkbook wb) {
-        HSSFFont plain = wb.createFont();
+    private static CellStyle createTextStyle(Workbook wb) {
+        Font plain = wb.createFont();
         plain.setFontHeightInPoints((short)12);
 
-        HSSFCellStyle textStyle = wb.createCellStyle();
+        CellStyle textStyle = wb.createCellStyle();
         textStyle.setFont(plain);
 
         return textStyle;
     }
 
-    private static HSSFCellStyle createMissedStyle(HSSFWorkbook wb) {
+    private static CellStyle createMissedStyle(Workbook wb) {
 
-        HSSFCellStyle style = wb.createCellStyle();
-        style.setFillForegroundColor(HSSFColor.HSSFColorPredefined.RED.getIndex());
+        CellStyle style = wb.createCellStyle();
+        style.setFillForegroundColor(IndexedColors.RED.getIndex());
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         return style;
     }
 
-    private static void createTilte(HSSFWorkbook wb, HSSFSheet sheet) {
-        HSSFRow titleRow = sheet.getRow(0);
+    private static void createTilte(Workbook wb, Sheet sheet) {
+        Row titleRow = sheet.getRow(0);
 
-        HSSFCell cell = titleRow.createCell(0);
+        Cell cell = titleRow.createCell(0);
         cell.setCellStyle(createTitleStyle(wb));
         cell.setCellValue("KEY");
 
         sheet.setColumnWidth(cell.getColumnIndex(), (40 * 256));
     }
 
-    private static void addLang2Tilte(HSSFWorkbook wb, HSSFSheet sheet, String lang) {
-        HSSFRow titleRow = sheet.getRow(0);
-        HSSFCell lastCell = titleRow.getCell((int) titleRow.getLastCellNum() - 1);
+    private static void addLang2Tilte(Workbook wb, Sheet sheet, String lang) {
+        Row titleRow = sheet.getRow(0);
+        Cell lastCell = titleRow.getCell((int) titleRow.getLastCellNum() - 1);
         if (lang.equals(lastCell.getStringCellValue())) {
             // language column already exists
             return;
         }
-        HSSFCell cell = titleRow.createCell((int)titleRow.getLastCellNum());
+        Cell cell = titleRow.createCell((int)titleRow.getLastCellNum());
         cell.setCellStyle(createTitleStyle(wb));
         cell.setCellValue(lang);
 
@@ -242,14 +239,14 @@ public class ToolExport {
 
         Map<String, Integer> keys = new HashMap<String, Integer>();
 
-        HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(f));
+        Workbook wb = WorkbookFactory.create(new FileInputStream(f));
 
-        HSSFCellStyle commentStyle = createCommentStyle(wb);
-        HSSFCellStyle plurarStyle = createPlurarStyle(wb);
-        HSSFCellStyle keyStyle = createKeyStyle(wb);
-        HSSFCellStyle textStyle = createTextStyle(wb);
+        CellStyle commentStyle = createCommentStyle(wb);
+        CellStyle plurarStyle = createPlurarStyle(wb);
+        CellStyle keyStyle = createKeyStyle(wb);
+        CellStyle textStyle = createTextStyle(wb);
 
-        HSSFSheet sheet = wb.getSheet(project);
+        Sheet sheet = wb.getSheet(project);
 
 
         for (int i = 0; i < strings.getLength(); i++) {
@@ -258,8 +255,8 @@ public class ToolExport {
 
             }
             if (item.getNodeType() == Node.COMMENT_NODE) {
-                HSSFRow row = sheet.createRow(rowIndex++);
-                HSSFCell cell = row.createCell(0);
+                Row row = sheet.createRow(rowIndex++);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(String.format("/** %s **/", item.getTextContent()));
                 cell.setCellStyle(commentStyle);
 
@@ -278,9 +275,9 @@ public class ToolExport {
                 }
                 keys.put(key, rowIndex);
 
-                HSSFRow row = sheet.createRow(rowIndex++);
+                Row row = sheet.createRow(rowIndex++);
 
-                HSSFCell cell = row.createCell(0);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(key);
                 cell.setCellStyle(keyStyle);
 
@@ -294,8 +291,8 @@ public class ToolExport {
                 }
                 String pluralName = key;
 
-                HSSFRow row = sheet.createRow(rowIndex++);
-                HSSFCell cell = row.createCell(0);
+                Row row = sheet.createRow(rowIndex++);
+                Cell cell = row.createCell(0);
                 cell.setCellValue(String.format("//plurals: %s", pluralName));
                 cell.setCellStyle(plurarStyle);
 
@@ -306,9 +303,9 @@ public class ToolExport {
                         String itemKey = pluralName + "#" + plurarItem.getAttributes().getNamedItem("quantity").getNodeValue();
                         keys.put(itemKey, rowIndex);
 
-                        HSSFRow itemRow = sheet.createRow(rowIndex++);
+                        Row itemRow = sheet.createRow(rowIndex++);
 
-                        HSSFCell itemCell = itemRow.createCell(0);
+                        Cell itemCell = itemRow.createCell(0);
                         itemCell.setCellValue(itemKey);
                         itemCell.setCellStyle(keyStyle);
 
@@ -329,9 +326,9 @@ public class ToolExport {
                         String itemKey = key + "[" + k++ + "]";
                         keys.put(itemKey, rowIndex);
 
-                        HSSFRow itemRow = sheet.createRow(rowIndex++);
+                        Row itemRow = sheet.createRow(rowIndex++);
 
-                        HSSFCell itemCell = itemRow.createCell(0);
+                        Cell itemCell = itemRow.createCell(0);
                         itemCell.setCellValue(itemKey);
                         itemCell.setCellStyle(keyStyle);
 
@@ -356,14 +353,14 @@ public class ToolExport {
         out.println(String.format("Start processing: '%s' %s", lang, src.getName()));
         Set<String> missedKeys = new HashSet<String>(keysIndex.keySet());
 
-        HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(f));
+        Workbook wb = WorkbookFactory.create(new FileInputStream(f));
 
-        HSSFCellStyle textStyle = createTextStyle(wb);
+        CellStyle textStyle = createTextStyle(wb);
 
-        HSSFSheet sheet = wb.getSheet(project);
+        Sheet sheet = wb.getSheet(project);
         addLang2Tilte(wb, sheet, lang);
 
-        HSSFRow titleRow = sheet.getRow(0);
+        Row titleRow = sheet.getRow(0);
         int lastColumnIdx = (int)titleRow.getLastCellNum() - 1;
 
         for (int i = 0; i < strings.getLength(); i++) {
@@ -382,9 +379,9 @@ public class ToolExport {
                 }
 
                 missedKeys.remove(key);
-                HSSFRow row = sheet.getRow(index);
+                Row row = sheet.getRow(index);
 
-                HSSFCell cell = row.createCell(lastColumnIdx);
+                Cell cell = row.createCell(lastColumnIdx);
                 cell.setCellValue(item.getTextContent());
                 cell.setCellStyle(textStyle);
             } else if ("plurals".equals(item.getNodeName())) {
@@ -403,9 +400,9 @@ public class ToolExport {
                         }
                         missedKeys.remove(key);
 
-                        HSSFRow row = sheet.getRow(index);
+                        Row row = sheet.getRow(index);
 
-                        HSSFCell cell = row.createCell(lastColumnIdx);
+                        Cell cell = row.createCell(lastColumnIdx);
                         cell.setCellValue(pluralItem.getTextContent());
                         cell.setCellStyle(textStyle);
                     }
@@ -424,9 +421,9 @@ public class ToolExport {
                         }
                         missedKeys.remove(key);
 
-                        HSSFRow itemRow = sheet.getRow(rowIndex);
+                        Row itemRow = sheet.getRow(rowIndex);
 
-                        HSSFCell cell = itemRow.createCell(lastColumnIdx);
+                        Cell cell = itemRow.createCell(lastColumnIdx);
                         cell.setCellValue(arrayItem.getTextContent());
                         cell.setCellStyle(textStyle);
                     }
@@ -434,7 +431,7 @@ public class ToolExport {
             }
         }
 
-        HSSFCellStyle missedStyle = createMissedStyle(wb);
+        CellStyle missedStyle = createMissedStyle(wb);
 
         if (!missedKeys.isEmpty()) {
             out.println("  MISSED KEYS:");
@@ -442,8 +439,8 @@ public class ToolExport {
         for (String missedKey : missedKeys) {
             out.println("\t" + missedKey);
             Integer index = keysIndex.get(missedKey);
-            HSSFRow row = sheet.getRow(index);
-            HSSFCell cell = row.createCell((int)row.getLastCellNum());
+            Row row = sheet.getRow(index);
+            Cell cell = row.createCell((int)row.getLastCellNum());
             cell.setCellStyle(missedStyle);
         }
 

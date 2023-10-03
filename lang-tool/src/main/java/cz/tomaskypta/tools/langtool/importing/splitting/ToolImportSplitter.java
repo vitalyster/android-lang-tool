@@ -14,11 +14,7 @@ import javax.xml.transform.TransformerException;
 import cz.tomaskypta.tools.langtool.importing.ImportConfig;
 import cz.tomaskypta.tools.langtool.importing.ToolImport;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 
 /**
  * Created by Tomas Kypta on 19.09.14.
@@ -47,11 +43,11 @@ public class ToolImportSplitter {
             return;
         }
 
-        HSSFWorkbook wb = new HSSFWorkbook(new FileInputStream(new File(config.inputFile)));
-        HSSFSheet sheet = wb.getSheetAt(0);
+        Workbook wb = WorkbookFactory.create(new FileInputStream(new File(config.inputFile)));
+        Sheet sheet = wb.getSheetAt(0);
 
-        HSSFWorkbook wbConfig = new HSSFWorkbook(new FileInputStream(new File(config.splittingConfigFile)));
-        HSSFSheet sheetConfig = wbConfig.getSheetAt(0);
+        Workbook wbConfig = WorkbookFactory.create(new FileInputStream(new File(config.splittingConfigFile)));
+        Sheet sheetConfig = wbConfig.getSheetAt(0);
 
         ToolImportSplitter tool = new ToolImportSplitter();
         tool.mIntermediateXlsDir = new File("intermediate");
@@ -72,7 +68,7 @@ public class ToolImportSplitter {
         }
     }
 
-    private void prepareSplittingMap(HSSFSheet sheetConfig) throws IOException, TransformerException {
+    private void prepareSplittingMap(Sheet sheetConfig) throws IOException, TransformerException {
         mSplittingMap = new TreeMap<Integer, String>();
         mOutputFileNames = new HashMap<String, String>();
         Iterator<Row> it = sheetConfig.rowIterator();
@@ -89,7 +85,7 @@ public class ToolImportSplitter {
         }
     }
 
-    private void split(HSSFSheet inSheet) throws IOException, TransformerException {
+    private void split(Sheet inSheet) throws IOException, TransformerException {
         Row inTitleRow = inSheet.getRow(0);
         for (Map.Entry<Integer, String> entry : mSplittingMap.entrySet()) {
             System.out.println("Splitting into file: " + entry.getValue());
@@ -99,8 +95,8 @@ public class ToolImportSplitter {
             try {
                 fos = new FileOutputStream(outputFile);
 
-                HSSFWorkbook wb = new HSSFWorkbook();
-                HSSFSheet outSheet = wb.createSheet(inSheet.getSheetName());
+                Workbook wb = WorkbookFactory.create(outputFile.getName().endsWith("x"));
+                Sheet outSheet = wb.createSheet(inSheet.getSheetName());
                 copyTitleRow(inTitleRow, outSheet);
 
                 Integer actFileStart = entry.getKey();
@@ -120,20 +116,20 @@ public class ToolImportSplitter {
         }
     }
 
-    private void copyTitleRow(Row inTitleRow, HSSFSheet outSheet) {
-        HSSFRow outTitleRow = outSheet.createRow(0);
+    private void copyTitleRow(Row inTitleRow, Sheet outSheet) {
+        Row outTitleRow = outSheet.createRow(0);
         copyRow(inTitleRow, outTitleRow);
     }
 
-    private void copyRowRange(HSSFSheet inSheet, HSSFSheet outSheet, int rowStart, int rowEnd) {
+    private void copyRowRange(Sheet inSheet, Sheet outSheet, int rowStart, int rowEnd) {
         for (int rowIdx = rowStart, outRowIdx = 1; rowIdx < rowEnd; rowIdx++, outRowIdx++) {
-            HSSFRow outRow = outSheet.createRow(outRowIdx);
-            HSSFRow inRow = inSheet.getRow(rowIdx-1);
+            Row outRow = outSheet.createRow(outRowIdx);
+            Row inRow = inSheet.getRow(rowIdx-1);
             copyRow(inRow, outRow);
         }
     }
 
-    private void copyRow(Row inTitleRow, HSSFRow outRow) {
+    private void copyRow(Row inTitleRow, Row outRow) {
         // TODO copy formatting
         Iterator<Cell> it = inTitleRow.cellIterator();
         while (it.hasNext()) {

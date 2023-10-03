@@ -1,5 +1,10 @@
 package cz.tomaskypta.tools.langtool;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,10 +12,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
 
 /**
  * Created by tomas on 04.10.14.
@@ -46,8 +47,8 @@ public class CommonConfig {
         ignoredSet.clear();
 
         try {
-            HSSFWorkbook wbEscaping = new HSSFWorkbook(new FileInputStream(new File(this.ignoreListFile)));
-            HSSFSheet sheetEscaping = wbEscaping.getSheetAt(0);
+            Workbook wbEscaping = WorkbookFactory.create(new FileInputStream(new File(this.ignoreListFile)));
+            Sheet sheetEscaping = wbEscaping.getSheetAt(0);
             Iterator<Row> it = sheetEscaping.rowIterator();
             while (it.hasNext()) {
                 Row row = it.next();

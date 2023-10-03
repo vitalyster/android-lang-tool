@@ -11,6 +11,9 @@ import cz.tomaskypta.tools.langtool.exporting.ToolExport;
 import cz.tomaskypta.tools.langtool.importing.ToolImport;
 import cz.tomaskypta.tools.langtool.importing.splitting.SplittingConfig;
 import cz.tomaskypta.tools.langtool.importing.splitting.ToolImportSplitter;
+import org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 import org.xml.sax.SAXException;
 
 public class Tool {
@@ -29,6 +32,9 @@ public class Tool {
             printHelp();
             return;
         }
+
+        WorkbookFactory.addProvider(new HSSFWorkbookFactory());
+        WorkbookFactory.addProvider(new XSSFWorkbookFactory());
 
         if (parsedArgs.exportProject != null) {
             // exporting
