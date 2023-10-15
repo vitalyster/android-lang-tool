@@ -7,8 +7,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -66,14 +68,17 @@ public class ToolExport {
             System.err.println("Cannot find resource directory.");
             return;
         }
+        Optional<File> defValuesDir = Arrays.stream(res.listFiles()).filter(i -> i.getName().equals(DIR_VALUES))
+                .findFirst();
+        if (defValuesDir.isPresent()) {
+            keysIndex = exportDefLang(defValuesDir.get());
+        }
         for (File dir : res.listFiles()) {
             if (!dir.isDirectory() || !dir.getName().startsWith(DIR_VALUES)) {
                 continue;
             }
             String dirName = dir.getName();
-            if (dirName.equals(DIR_VALUES)) {
-                keysIndex = exportDefLang(dir);
-            } else {
+            if (!dirName.equals(DIR_VALUES)) {
                 int index = dirName.indexOf('-');
                 if (index == -1)
                     continue;
